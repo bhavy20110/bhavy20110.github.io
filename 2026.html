@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: radial-gradient(circle at top, #1a1a40, #000);
+    color: #fff;
+    overflow: hidden;
+    text-align: center;
+}
+
+.content {
+    position: relative;
+    z-index: 3;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: fadeIn 2s ease;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 25px rgba(255,255,255,0.5);
+    animation: glow 3s infinite alternate;
+}
+
+p {
+    min-height: 24px;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.countdown {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.box {
+    background: rgba(255,255,255,0.12);
+    padding: 15px 20px;
+    border-radius: 10px;
+    min-width: 90px;
+    backdrop-filter: blur(6px);
+}
+
+.box span {
+    font-size: 2rem;
+    display: block;
+}
+
+footer {
+    position: fixed;
+    bottom: 15px;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+    z-index: 3;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#stars { z-index: 1; }
+#fireworks { z-index: 2; }
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #fff; }
+    to { text-shadow: 0 0 30px #ffd633; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-40%); }
+    to { opacity: 1; transform: translateY(-50%); }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+<canvas id="fireworks"></canvas>
+
+<div class="content">
+    <h1 id="title">🎆 Happy New Year 2026 🎆</h1>
+    <p id="type"></p>
+
+    <div class="countdown">
+        <div class="box"><span id="d">0</span>Days</div>
+        <div class="box"><span id="h">0</span>Hours</div>
+        <div class="box"><span id="m">0</span>Minutes</div>
+        <div class="box"><span id="s">0</span>Seconds</div>
+    </div>
+</div>
+
+<footer>by bhavya</footer>
+
+<script>
+/* Typewriter */
+const text = "New year. New energy. New beginnings.";
+let i = 0;
+setInterval(() => {
+    if (i <= text.length) {
+        type.innerText = text.slice(0, i++);
+    }
+}, 80);
+
+/* Countdown */
+const target = new Date("Jan 1, 2026 00:00:00").getTime();
+const title = document.getElementById("title");
+
+setInterval(() => {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+        title.innerText = "🎉 Welcome 2026 🎉";
+        title.style.transform = "scale(1.2)";
+        megaBlast();
+        return;
+    }
+    d.innerText = Math.floor(diff / 86400000);
+    h.innerText = Math.floor((diff / 3600000) % 24);
+    m.innerText = Math.floor((diff / 60000) % 60);
+    s.innerText = Math.floor((diff / 1000) % 60);
+}, 1000);
+
+/* Stars */
+const sc = stars.getContext("2d");
+resizeAll();
+let starArr = Array.from({length:150}, () => ({
+    x: Math.random()*innerWidth,
+    y: Math.random()*innerHeight,
+    r: Math.random()*2
+}));
+
+function drawStars() {
+    sc.clearRect(0,0,innerWidth,innerHeight);
+    sc.fillStyle = "#fff";
+    starArr.forEach(s => {
+        sc.globalAlpha = Math.random();
+        sc.beginPath();
+        sc.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        sc.fill();
+    });
+    requestAnimationFrame(drawStars);
+}
+drawStars();
+
+/* Fireworks */
+const fc = fireworks.getContext("2d");
+let particles = [];
+
+function launch(x,y,p=80) {
+    const colors=["#ff4d4d","#ffd633","#4dd2ff","#b84dff","#4dff88"];
+    for(let i=0;i<p;i++){
+        particles.push({
+            x,y,a:Math.random()*Math.PI*2,
+            s:Math.random()*5+1,
+            l:80,
+            c:colors[Math.floor(Math.random()*colors.length)]
+        });
+    }
+}
+
+function megaBlast(){
+    for(let i=0;i<8;i++){
+        setTimeout(()=>launch(Math.random()*innerWidth,Math.random()*innerHeight/2,160),i*250);
+    }
+}
+
+setInterval(()=>launch(Math.random()*innerWidth,Math.random()*innerHeight/2),900);
+
+function animateFX(){
+    fc.fillStyle="rgba(0,0,0,0.25)";
+    fc.fillRect(0,0,innerWidth,innerHeight);
+    particles.forEach((p,i)=>{
+        p.x+=Math.cos(p.a)*p.s;
+        p.y+=Math.sin(p.a)*p.s;
+        p.l--;
+        fc.fillStyle=p.c;
+        fc.fillRect(p.x,p.y,3,3);
+        if(p.l<=0)particles.splice(i,1);
+    });
+    requestAnimationFrame(animateFX);
+}
+animateFX();
+
+function resizeAll(){
+    stars.width=fireworks.width=innerWidth;
+    stars.height=fireworks.height=innerHeight;
+}
+window.onresize=resizeAll;
+</script>
+
+</body>
+</html>
