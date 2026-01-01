@@ -65,8 +65,8 @@ canvas {
 <canvas id="fx"></canvas>
 
 <div class="content">
-    <h1 id="title">🎆 Happy New Year 2026  🎆</h1>
-    <div class="subtitle">New beginnings. Better days ahead(most probably 😂).</div>
+    <h1 id="title">🎆 Happy New Year 2026 🎆</h1>
+    <div class="subtitle">New beginnings. Better days ahead (most probably 😂).</div>
     <div class="countdown">
         <div class="box"><span id="d">0</span>Days</div>
         <div class="box"><span id="h">0</span>Hours</div>
@@ -76,21 +76,30 @@ canvas {
 </div>
 
 <script>
-// COUNTDOWN
+// ----------------- COUNTDOWN -----------------
 const target = new Date("Jan 1, 2026 00:00:00").getTime();
+const titleEl = document.getElementById("title");
 setInterval(() => {
-    const diff = target - Date.now();
+    const now = new Date();
+    const diff = target - now.getTime();
+
     if(diff <= 0){
-        document.getElementById("title").innerText = "🎉 Welcome 2026 with love by bhavya 🎉";
+        // Agar 1 Jan 2026 ke 00:00 ke baad ho
+        if(now.getFullYear() === 2026 && now.getMonth() === 0 && now.getDate() === 1){
+            titleEl.innerText = "🎉 Welcome 2026 with love by bhavya 🎉";
+        } else {
+            titleEl.innerText = "⏰ Oops! You are late, should’ve came before 12:00 AM";
+        }
         return;
     }
-    d.textContent = Math.floor(diff/86400000);
-    h.textContent = Math.floor((diff/3600000)%24);
-    m.textContent = Math.floor((diff/60000)%60);
-    s.textContent = Math.floor((diff/1000)%60);
+
+    document.getElementById("d").textContent = Math.floor(diff/86400000);
+    document.getElementById("h").textContent = Math.floor((diff/3600000)%24);
+    document.getElementById("m").textContent = Math.floor((diff/60000)%60);
+    document.getElementById("s").textContent = Math.floor((diff/1000)%60);
 },1000);
 
-// BACKGROUND PARTICLES
+// ----------------- BACKGROUND PARTICLES -----------------
 const bgCanvas = document.getElementById("bg");
 const bgCtx = bgCanvas.getContext("2d");
 let bgParticles = Array.from({length:150}, () => ({
@@ -120,7 +129,7 @@ function drawBg(){
 }
 drawBg();
 
-// FIREWORKS
+// ----------------- FIREWORKS -----------------
 const fxCanvas = document.getElementById("fx");
 const fxCtx = fxCanvas.getContext("2d");
 let fireworks = [];
@@ -157,7 +166,7 @@ function animateFX(){
 setInterval(createFirework,900);
 animateFX();
 
-// RESIZE
+// ----------------- RESIZE -----------------
 function resizeAll(){
     bgCanvas.width = fxCanvas.width = window.innerWidth;
     bgCanvas.height = fxCanvas.height = window.innerHeight;
