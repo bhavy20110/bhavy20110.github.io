@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Happy New Year 2026</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
 body {
     margin: 0;
@@ -12,27 +11,30 @@ body {
     background: #000;
     color: #fff;
     overflow: hidden;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 /* MAIN CONTENT */
 .content {
+    text-align: center;
+    z-index: 10;
     position: relative;
-    z-index: 3;
-    top: 50%;
-    transform: translateY(-50%);
     padding: 0 10px;
 }
 
 h1 {
-    font-size: clamp(2rem,5vw,3rem);
-    margin-bottom: 10px;
-    text-shadow: 0 0 25px rgba(255,255,255,0.6);
+    font-size: clamp(2rem, 6vw, 3rem);
+    margin-bottom: 12px;
+    text-shadow: 0 0 25px rgba(255,255,255,0.7);
+    line-height: 1.2;
 }
 
 .subtitle {
     font-size: clamp(14px,4vw,20px);
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     opacity: 0.9;
 }
 
@@ -48,21 +50,15 @@ h1 {
     font-size: clamp(18px,4vw,28px);
 }
 
-/* CANVAS */
+/* CANVASES */
 canvas {
     position: fixed;
     top: 0;
     left: 0;
-}
-
-/* ANIMATIONS */
-@keyframes glow {
-    from { text-shadow: 0 0 10px #fff; }
-    to { text-shadow: 0 0 40px #ffd633; }
+    z-index: 1;
 }
 </style>
 </head>
-
 <body>
 
 <canvas id="bg"></canvas>
@@ -80,21 +76,21 @@ canvas {
 </div>
 
 <script>
-// ----------------- COUNTDOWN -----------------
+// COUNTDOWN
 const target = new Date("Jan 1, 2026 00:00:00").getTime();
 setInterval(() => {
     const diff = target - Date.now();
-    if(diff<=0){
-        title.innerText = "🎉 Welcome 2026 with love by bhavya 🎉";
+    if(diff <= 0){
+        document.getElementById("title").innerText = "🎉 Welcome 2026 with love by bhavya 🎉";
         return;
     }
-    d.textContent = Math.floor(diff / 86400000);
-    h.textContent = Math.floor((diff / 3600000) % 24);
-    m.textContent = Math.floor((diff / 60000) % 60);
-    s.textContent = Math.floor((diff / 1000) % 60);
+    d.textContent = Math.floor(diff/86400000);
+    h.textContent = Math.floor((diff/3600000)%24);
+    m.textContent = Math.floor((diff/60000)%60);
+    s.textContent = Math.floor((diff/1000)%60);
 },1000);
 
-// ----------------- BACKGROUND PARTICLES -----------------
+// BACKGROUND PARTICLES
 const bgCanvas = document.getElementById("bg");
 const bgCtx = bgCanvas.getContext("2d");
 let bgParticles = Array.from({length:150}, () => ({
@@ -109,14 +105,13 @@ function drawBg(){
     bgCtx.fillStyle = "#000";
     bgCtx.fillRect(0,0,window.innerWidth,window.innerHeight);
     bgParticles.forEach(p=>{
-        p.x += p.dx;
-        p.y += p.dy;
-        if(p.x<0) p.x=window.innerWidth;
-        if(p.x>window.innerWidth) p.x=0;
-        if(p.y<0) p.y=window.innerHeight;
-        if(p.y>window.innerHeight) p.y=0;
+        p.x+=p.dx; p.y+=p.dy;
+        if(p.x<0)p.x=window.innerWidth;
+        if(p.x>window.innerWidth)p.x=0;
+        if(p.y<0)p.y=window.innerHeight;
+        if(p.y>window.innerHeight)p.y=0;
         bgCtx.fillStyle="#fff";
-        bgCtx.globalAlpha = Math.random();
+        bgCtx.globalAlpha=Math.random();
         bgCtx.beginPath();
         bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
         bgCtx.fill();
@@ -125,7 +120,7 @@ function drawBg(){
 }
 drawBg();
 
-// ----------------- FIREWORKS -----------------
+// FIREWORKS
 const fxCanvas = document.getElementById("fx");
 const fxCtx = fxCanvas.getContext("2d");
 let fireworks = [];
@@ -133,7 +128,7 @@ let fireworks = [];
 function createFirework(){
     const x = Math.random()*window.innerWidth;
     const y = Math.random()*window.innerHeight*0.5;
-    const colors = ["#ff4d4d","#ffd633","#4dd2ff","#b84dff","#4dff88"];
+    const colors=["#ff4d4d","#ffd633","#4dd2ff","#b84dff","#4dff88"];
     for(let i=0;i<70;i++){
         fireworks.push({
             x:x,
@@ -147,27 +142,27 @@ function createFirework(){
 }
 
 function animateFX(){
-    fxCtx.fillStyle = "rgba(0,0,0,0.2)";
+    fxCtx.fillStyle="rgba(0,0,0,0.2)";
     fxCtx.fillRect(0,0,window.innerWidth,window.innerHeight);
     fireworks.forEach((f,i)=>{
-        f.x += Math.cos(f.a)*f.s;
-        f.y += Math.sin(f.a)*f.s;
+        f.x+=Math.cos(f.a)*f.s;
+        f.y+=Math.sin(f.a)*f.s;
         f.l--;
-        fxCtx.fillStyle = f.c;
+        fxCtx.fillStyle=f.c;
         fxCtx.fillRect(f.x,f.y,3,3);
-        if(f.l<=0) fireworks.splice(i,1);
+        if(f.l<=0)fireworks.splice(i,1);
     });
     requestAnimationFrame(animateFX);
 }
-setInterval(createFirework, 900);
+setInterval(createFirework,900);
 animateFX();
 
-// ----------------- RESIZE -----------------
+// RESIZE
 function resizeAll(){
     bgCanvas.width = fxCanvas.width = window.innerWidth;
     bgCanvas.height = fxCanvas.height = window.innerHeight;
 }
-window.onresize = resizeAll;
+window.addEventListener("resize",resizeAll);
 resizeAll();
 </script>
 
